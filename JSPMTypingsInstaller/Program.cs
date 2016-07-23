@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using static System.Console;
 
-namespace JSPMAureliaTypingsInstaller
+namespace JSPMTypingsInstaller
 {
     class Program
     {
@@ -31,24 +32,24 @@ namespace JSPMAureliaTypingsInstaller
                     from property in config.Properties()
                     let aureliaPackageName = property.Name
                     where matchesFilter(aureliaPackageName)
-                    let replacement = ($"github:{options.FrameworkNameOrPrefix}") + (options.FrameworkNameOrPrefix == (string)property.Value ? string.Empty : "/")
-                    let split = ((string)property.Value).SplitRemoveEmpty($"npm:{options.FrameworkNameOrPrefix}-", $"npm:{options.FrameworkNameOrPrefix}")
-                    let target = replacement + split.FirstOrDefault()
-                        .Replace('@', '#')
+                    let value = (string)property.Value
+                    let replacement = ($"github:{options.FrameworkNameOrPrefix}") + (value.StartsWith(options.FrameworkNameOrPrefix, StringComparison.CurrentCulture) && value.IndexOf('-') == -1 ? string.Empty : "/")
+                    let split = value.SplitRemoveEmpty($"npm:{options.FrameworkNameOrPrefix}-", $"npm:{options.FrameworkNameOrPrefix}")
+                    let target = replacement + split.FirstOrDefault().Replace('@', '#')
                     select $"typings install {target}";
                 var output = options.Outfile;
 
-                matches.ToList().ForEach(Console.WriteLine);
+                matches.Select(cmd => $"Added command: {cmd}").ToList().ForEach(WriteLine);
 
                 using (var outfile = File.CreateText(output))
                 {
                     matches.ToList().ForEach(outfile.WriteLine);
                 }
-                Console.WriteLine("Finished successfully");
+                WriteLine($"Successfully created {Path.GetFullPath(options.Outfile)}");
             }
             catch
             {
-                Console.WriteLine("Usage: JSPMAureliaTypingsInstaller [--jspmconfig path-to-jspm-config] [--framework name-or-prefix] [--out .\\install-aurelia-typings.ps1]");
+                WriteLine("Usage: JSPMTypingsInstaller [--jspmconfig path-to-jspm-config] [--framework name-or-prefix] [--out .\\install-typings.ps1]");
             }
         }
 
@@ -56,7 +57,7 @@ namespace JSPMAureliaTypingsInstaller
         {
             var jspmConfig = args.SkipWhile(a => a != "--jspmconfig").Skip(1).DefaultIfEmpty("jspm.config.js").First();
             var frameworkName = args.SkipWhile(a => a != "--framework").Skip(1).DefaultIfEmpty("aurelia").First();
-            var outfile = args.SkipWhile(a => a != "--out").Skip(1).DefaultIfEmpty(Directory.GetCurrentDirectory() + "\\install-aurelia-typings.ps1").First();
+            var outfile = args.SkipWhile(a => a != "--out").Skip(1).DefaultIfEmpty(Directory.GetCurrentDirectory() + "\\install-typings.ps1").First();
             return new Config(jspmConfig, frameworkName, outfile);
         }
     }

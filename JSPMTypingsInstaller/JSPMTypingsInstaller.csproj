@@ -7,8 +7,8 @@
     <ProjectGuid>{4CD1D259-E434-410A-873A-8771015B6A35}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JSPMAureliaTypingsInstaller</RootNamespace>
-    <AssemblyName>JSPMAureliaTypingsInstaller</AssemblyName>
+    <RootNamespace>JSPMTypingsInstaller</RootNamespace>
+    <AssemblyName>JSPMTypingsInstaller</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
